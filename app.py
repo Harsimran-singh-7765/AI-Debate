@@ -67,7 +67,9 @@ if start_btn:
         chat = []
         st.markdown('<div class="chat-box">', unsafe_allow_html=True)
 
-        first_prompt = f"You are {debater_1}. Topic: '{topic}'. Speak your first 2-3 lines passionately."
+        first_prompt = f"""You are {debater_1}. Debate in a passionate Hinglish tone. Stick to 2-3 lines.
+The topic is: "{topic}". Speak first, emotionally and from the heart."""
+
         response = model.generate_content(first_prompt).text.strip()
         name1 = debater_1.split(",")[0]
         chat.append(("left", name1, response))
@@ -76,7 +78,8 @@ if start_btn:
 
         for _ in range(num_rounds):
             prev_msg = chat[-1][2]
-            reply_prompt = f"You are {debater_2}. Respond logically to this: '{prev_msg}' in 2-3 lines."
+            reply_prompt = f"""You are {debater_2}. Debate using logic, real facts, and Hinglish. Stick to 2-3 lines.
+Respond thoughtfully to this: '{prev_msg}'"""
             response = model.generate_content(reply_prompt).text.strip()
             name2 = debater_2.split(",")[0]
             chat.append(("right", name2, response))
@@ -84,13 +87,15 @@ if start_btn:
             speak_and_wait(response)
 
             prev_msg = chat[-1][2]
-            rebuttal_prompt = f"You are {debater_1}. Rebut this: '{prev_msg}' in 2-3 lines."
+            rebuttal_prompt = f"""You are {debater_1}. Rebut this point with strong emotions and Hinglish. Stick to 2-3 lines.
+'{prev_msg}'"""
             response = model.generate_content(rebuttal_prompt).text.strip()
             chat.append(("left", name1, response))
             st.markdown(f'<div class="message left"><strong>{name1}</strong><br>{response}</div>', unsafe_allow_html=True)
             speak_and_wait(response)
 
-        final_prompt = f"You are {debater_2}. Wrap up the debate in 3-4 lines."
+        final_prompt = f"""You are {debater_2}. Wrap up your thoughts confidently in 3-4 lines.
+Summarize your strongest arguments and end with a final line in Hinglish."""
         response = model.generate_content(final_prompt).text.strip()
         chat.append(("right", name2, response))
         st.markdown(f'<div class="message right"><strong>{name2}</strong><br>{response}</div>', unsafe_allow_html=True)
@@ -98,7 +103,11 @@ if start_btn:
 
         st.markdown('</div>', unsafe_allow_html=True)
         transcript = "\n".join([f"{n}: {m}" for _, n, m in chat])
-        judge_prompt = f"You are a fair judge. Here's the debate transcript:\n{transcript}\nWho won and why?"
+        judge_prompt = f"""You are a strict but fair judge. Here's the debate transcript:
+
+{transcript}
+
+Give a final verdict — pick a winner even if it's close. Explain who was ahead and why. Be decisive. Use a formal but witty tone."""
         judge_response = model.generate_content(judge_prompt).text.strip()
         st.markdown(f'<div class="judge">⚖️ <strong>Judge\'s Verdict:</strong><br>{judge_response}</div>', unsafe_allow_html=True)
         speak_and_wait(judge_response)
