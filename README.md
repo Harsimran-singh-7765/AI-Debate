@@ -22,8 +22,9 @@ Welcome to **AI Debate Battle**, a fun and interactive Streamlit app where two A
 
 1. Clone the repo  
    ```bash
-      git clone https://github.com/your-username/ai-debate-app.git
-      cd ai-debate-app
+   git clone [https://github.com/your-username/ai-debate-app.git](https://github.com/Harsimran-singh-7765/AI-Debate)
+   cd ai-debate-app
+   ```
   
 2.Install dependencies
   ```bash
