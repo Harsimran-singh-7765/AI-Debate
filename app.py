@@ -67,47 +67,82 @@ if start_btn:
         chat = []
         st.markdown('<div class="chat-box">', unsafe_allow_html=True)
 
-        first_prompt = f"""You are {debater_1}. Debate in a passionate Hinglish tone. Stick to 2-3 lines.
-The topic is: "{topic}". Speak first, emotionally and from the heart."""
+        # Debater 1 opens
+        first_prompt = f"""
+You are {debater_1}. Debate in Hinglish with emotions.
+Make your argument in a natural, human tone. Always follow this implicit structure:
+- Start with a clear opinion/assertion.
+- Support it with a reason.
+- Add a small real-life example or analogy to back it up.
 
+Topic: "{topic}"
+Speak first in 2-3 lines.
+"""
         response = model.generate_content(first_prompt).text.strip()
         name1 = debater_1.split(",")[0]
         chat.append(("left", name1, response))
         st.markdown(f'<div class="message left"><strong>{name1}</strong><br>{response}</div>', unsafe_allow_html=True)
         speak_and_wait(response)
 
+        # Rounds of debate
         for _ in range(num_rounds):
             prev_msg = chat[-1][2]
-            reply_prompt = f"""You are {debater_2}. Debate using logic, real facts, and Hinglish. Stick to 2-3 lines.
-Respond thoughtfully to this: '{prev_msg}'"""
+            reply_prompt = f"""
+You are {debater_2}. You're a logical thinker.
+Debate in Hinglish with real facts, following this format (but don’t say these labels!):
+- Clear opinion/assertion
+- A logical reason or stat
+- A relatable example to support it
+
+Respond in 2-3 lines to: "{prev_msg}"
+"""
             response = model.generate_content(reply_prompt).text.strip()
             name2 = debater_2.split(",")[0]
             chat.append(("right", name2, response))
             st.markdown(f'<div class="message right"><strong>{name2}</strong><br>{response}</div>', unsafe_allow_html=True)
             speak_and_wait(response)
 
+            # Debater 1 rebuttal
             prev_msg = chat[-1][2]
-            rebuttal_prompt = f"""You are {debater_1}. Rebut this point with strong emotions and Hinglish. Stick to 2-3 lines.
-'{prev_msg}'"""
+            rebuttal_prompt = f"""
+You are {debater_1}. Rebut emotionally but follow this thought process:
+- Assert your opinion clearly
+- Disagree with a solid reason
+- Use a personal example or emotional angle
+
+Stay in Hinglish and respond to: "{prev_msg}" in 2-3 lines.
+"""
             response = model.generate_content(rebuttal_prompt).text.strip()
             chat.append(("left", name1, response))
             st.markdown(f'<div class="message left"><strong>{name1}</strong><br>{response}</div>', unsafe_allow_html=True)
             speak_and_wait(response)
 
-        final_prompt = f"""You are {debater_2}. Wrap up your thoughts confidently in 3-4 lines.
-Summarize your strongest arguments and end with a final line in Hinglish."""
+        # Final wrap-up by debater 2
+        final_prompt = f"""
+You are {debater_2}. Conclude confidently with 3-4 lines.
+Structure your final statement as:
+- Strong closing opinion
+- Recap your best argument
+- End with a clear example or memorable line in Hinglish
+"""
         response = model.generate_content(final_prompt).text.strip()
         chat.append(("right", name2, response))
         st.markdown(f'<div class="message right"><strong>{name2}</strong><br>{response}</div>', unsafe_allow_html=True)
         speak_and_wait(response)
 
+        # Judge verdict
         st.markdown('</div>', unsafe_allow_html=True)
         transcript = "\n".join([f"{n}: {m}" for _, n, m in chat])
-        judge_prompt = f"""You are a strict but fair judge. Here's the debate transcript:
+        judge_prompt = f"""
+You are a strict but witty judge. Here's the transcript of a Hinglish debate:
 
 {transcript}
 
-Give a final verdict — pick a winner even if it's close. Explain who was ahead and why. Be decisive. Use a formal but witty tone."""
+Now, give a decisive final verdict:
+- Choose a clear winner (don’t say it's a tie!)
+- Explain *why* in 3-4 lines
+- Highlight who had stronger reasoning, better examples, or more convincing delivery
+"""
         judge_response = model.generate_content(judge_prompt).text.strip()
         st.markdown(f'<div class="judge">⚖️ <strong>Judge\'s Verdict:</strong><br>{judge_response}</div>', unsafe_allow_html=True)
         speak_and_wait(judge_response)
